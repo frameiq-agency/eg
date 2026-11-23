@@ -202,12 +202,6 @@
                         <button data-filter="all" class="filter-btn px-4 py-2 rounded-xl text-xs font-extrabold bg-[#D71920] text-white shadow-md shadow-[#D71920]/20 transition-all">الكل (5)</button>
                         <button data-filter="educational" class="filter-btn px-4 py-2 rounded-xl text-xs font-extrabold bg-white dark:bg-[#202226] text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 hover:border-[#D71920] transition-all">تعليمي وطبي</button>
                         <button data-filter="podcast" class="filter-btn px-4 py-2 rounded-xl text-xs font-extrabold bg-white dark:bg-[#202226] text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 hover:border-[#D71920] transition-all">صناع محتوى وأعمال</button>
-                        
-                        <label class="cursor-pointer px-4 py-2 rounded-xl bg-white dark:bg-[#202226] hover:border-[#D71920] border border-neutral-200 dark:border-neutral-700 text-xs font-extrabold flex items-center gap-2 transition-all">
-                            <i data-lucide="folder-open" class="w-4 h-4 text-[#D71920]"></i>
-                            <span>اختيار الفيديوهات للمعاينة</span>
-                            <input type="file" id="localVideoLoader" accept="video/*" multiple class="hidden">
-                        </label>
                     </div>
                 </div>
 
@@ -244,12 +238,6 @@
                             حلقات يوتيوب تعليمية وشروحات كاملة بسرد بصري يحافظ على أعلى نسبة مشاهدة.
                         </p>
                     </div>
-
-                    <label class="cursor-pointer shrink-0 px-4 py-2.5 rounded-xl bg-neutral-100 dark:bg-[#202226] hover:border-[#D71920] border border-neutral-200 dark:border-neutral-700 text-xs font-extrabold flex items-center gap-2 transition-all">
-                        <i data-lucide="upload" class="w-4 h-4 text-[#D71920]"></i>
-                        <span>معاينة فيديوهات اليوتيوب من جهازك</span>
-                        <input type="file" id="localYoutubeLoader" accept="video/*" multiple class="hidden">
-                    </label>
                 </div>
 
                 <!-- Widescreen 16:9 YouTube Video Card -->
@@ -681,42 +669,42 @@
             <!-- Adaptive Video Player Container (9:16 for Reels, 16:9 for YouTube) -->
             <div id="modalAspectContainer" class="relative bg-black aspect-[9/16] max-h-[70vh] mx-auto flex items-center justify-center">
                 <video id="modalVideoPlayer" controls playsinline class="w-full h-full object-contain"></video>
+                <iframe id="modalDriveIframe" class="hidden w-full h-full border-0" allow="autoplay; fullscreen" allowfullscreen></iframe>
                 
-                <!-- Fallback Helper when MP4 isn't in folder yet -->
+                <!-- Fallback Helper when MP4 or Drive Link isn't linked yet -->
                 <div id="modalFallbackMsg" class="hidden absolute inset-0 p-6 flex flex-col items-center justify-center text-center bg-[#050505]/95">
                     <div class="w-14 h-14 rounded-2xl bg-[#D71920]/20 text-[#D71920] flex items-center justify-center mb-3">
                         <i data-lucide="video" class="w-7 h-7"></i>
                     </div>
                     <h4 class="font-extrabold text-white text-base mb-1">معاينة الفيديو</h4>
                     <p id="modalFallbackDesc" class="text-xs text-neutral-400 max-w-xs leading-relaxed mb-4"></p>
-                    <label class="cursor-pointer px-4 py-2.5 rounded-xl bg-[#D71920] hover:bg-[#B3141A] text-white text-xs font-extrabold transition-colors">
-                        اختر ملف الفيديو من جهازك للتشغيل الآن
-                        <input type="file" id="singleVideoPicker" accept="video/*" class="hidden">
-                    </label>
+                    <a href="https://drive.google.com/drive/folders/1xRPifUIKpGuCgfgPGgTVK2UPFPZHq_zp?usp=drive_link" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 rounded-xl bg-[#D71920] hover:bg-[#B3141A] text-white text-xs font-extrabold transition-colors">
+                        فتح مجلد الفيديوهات على Google Drive
+                    </a>
                 </div>
             </div>
 
-            <!-- Modal Footer -->
+            <!-- Modal Footer Bar -->
             <div class="px-5 py-3.5 bg-[#050505] border-t border-neutral-800 flex items-center justify-between gap-3">
-                <span id="modalVideoTags" class="text-xs text-neutral-400"></span>
-                <button id="modalOrderSimilar" class="px-4 py-2 rounded-xl bg-[#D71920] hover:bg-[#B3141A] text-white text-xs font-extrabold transition-colors">
-                    اطلب مونتاج مشابه
+                <span id="modalVideoTags" class="text-[11px] font-bold text-neutral-400 truncate"></span>
+                <button id="modalOrderSimilar" class="px-4 py-2 rounded-xl bg-[#D71920] hover:bg-[#B3141A] text-white text-xs font-extrabold shrink-0 transition-colors">
+                    اطلب مونتاج مماثل
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ==================== INTERACTIVE JAVASCRIPT ==================== -->
     <script>
-        // 1. Vertical Reels Data (9:16 - video_1.mp4 through video_5.mp4)
+        // 1. Vertical Reels Data (9:16 - Connected to your 5 Google Drive Reels)
         const reelsData = [
             {
                 id: 1,
                 isWide: false,
                 category: 'educational',
                 catLabel: 'محتوى تعليمي',
-                fileName: 'video_1.mp4',
+                fileName: 'Reel #01',
                 src: 'video_1.mp4',
+                driveUrl: 'https://drive.google.com/file/d/1yWZScTJDDWeB5EJpt9R3ENkLvsOj9REL/view?usp=drive_link',
                 duration: '0:27',
                 title: 'مونتاج ريلز المحاسبة والشروحات التعليمية',
                 desc: 'تحويل الشرح الأكاديمي إلى تجربة بصرية ممتعة باستخدام مؤثرات النيون، عناصر تفاعلية، وتحريك نصوص متزامن.',
@@ -728,8 +716,9 @@
                 isWide: false,
                 category: 'educational',
                 catLabel: 'توعية طبية',
-                fileName: 'video_2.mp4',
+                fileName: 'Reel #02',
                 src: 'video_2.mp4',
+                driveUrl: 'https://drive.google.com/file/d/1W8CW799jZprwKvMOJDDlCgbRSaF3E6tB/view?usp=drive_link',
                 duration: '0:40',
                 title: 'مونتاج المحتوى الطبي والتوعوي (فيتامين د)',
                 desc: 'دمج الرسوم التوضيحية ثلاثية الأبعاد، بطاقات المعلومات الملونة، وتنسيق بصري مريح يبقي المشاهد متابعاً للنهاية.',
@@ -741,8 +730,9 @@
                 isWide: false,
                 category: 'podcast',
                 catLabel: 'صناع المحتوى',
-                fileName: 'video_3.mp4',
+                fileName: 'Reel #03',
                 src: 'video_3.mp4',
+                driveUrl: 'https://drive.google.com/file/d/1Qp4Cwo9nA5zcaO9GVsMTp3Ci-4zFAiOx/view?usp=drive_link',
                 duration: '0:24',
                 title: 'مونتاج كتابة السكربت والهوك البصري (Timeline)',
                 desc: 'إيقاع سريع، انتقالات ورقية (Paper Cutouts)، ومؤثرات صوتية احترافية لزيادة نسبة الاحتفاظ بالمشاهد.',
@@ -754,8 +744,9 @@
                 isWide: false,
                 category: 'podcast',
                 catLabel: 'تطوير أعمال',
-                fileName: 'video_4.mp4',
+                fileName: 'Reel #04',
                 src: 'video_4.mp4',
+                driveUrl: 'https://drive.google.com/file/d/1j-ipjv1HTRndQSTg2rnBc1GNdbYlPGdc/view?usp=drive_link',
                 duration: '0:22',
                 title: 'مونتاج محتوى المبيعات وتطوير الأعمال',
                 desc: 'دمج اللقطات مع مشاهد موشن جرافيك توضيحية وخطوط عربية بارزة تبرز أهم الرسائل التسويقية.',
@@ -767,8 +758,9 @@
                 isWide: false,
                 category: 'educational',
                 catLabel: 'موشن وتكوين بصري',
-                fileName: 'video_5.mp4',
+                fileName: 'Reel #05',
                 src: 'video_5.mp4',
+                driveUrl: 'https://drive.google.com/file/d/1fF_MS132YZuKXo4D2dQOlx_QrSJAKw0k/view?usp=drive_link',
                 duration: '0:37',
                 title: 'مونتاج وتكوين بصري سينمائي (د. مجدي يعقوب)',
                 desc: 'سرد بصري عميق يجمع بين العناصر ثلاثية الأبعاد، الإضاءة السينمائية، والموسيقى التصويرية المؤثرة.',
@@ -777,21 +769,39 @@
             }
         ];
 
-        // 2. Long-Form YouTube Data (16:9 - youtube_1.mp4)
+        // 2. Long-Form YouTube Data (16:9 - Connected to your Google Drive Long Video)
         const youtubeData = [
             {
                 id: 101,
                 isWide: true,
-                catLabel: 'حلقة يوتيوب تعليمية',
-                fileName: 'youtube_1.mp4',
+                catLabel: 'حلقة يوتيوب',
+                fileName: 'YouTube #01',
                 src: 'youtube_1.mp4',
-                duration: '14:25',
-                title: 'مونتاج حلقات اليوتيوب التعليمية والشروحات الكاملة',
+                driveUrl: 'https://drive.google.com/file/d/1KDCMyYEd-zazkxhNds9dz6dvJ0Ci6StS/view?usp=drive_link',
+                duration: '01:17',
+                title: 'كيف تخلي زواجك يكون سبب بأول 100,000 في حسابك؟',
                 desc: 'سرد بصري متكامل يشمل تقسيم الفصول (Chapters)، رسوم بيانية متحركة، وموسيقى خلفية موزونة تحافظ على تركيز المشاهد.',
                 highlights: ['YouTube 16:9', 'Chapters & Graphics', 'Audio Mastering'],
                 accentGradient: 'from-red-950 via-[#202226] to-[#050505]'
             }
         ];
+
+        // Extract Google Drive File ID & Build Embed/Thumbnail URLs
+        function getDriveFileId(url) {
+            if (!url) return '';
+            const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+            return match ? match[1] : '';
+        }
+
+        function getDriveEmbedUrl(url) {
+            const id = getDriveFileId(url);
+            return id ? `https://drive.google.com/file/d/${id}/preview` : '';
+        }
+
+        function getDriveThumbnailUrl(url) {
+            const id = getDriveFileId(url);
+            return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w1000` : '';
+        }
 
         // DOM Elements & State Variables
         const reelsGrid = document.getElementById('reelsGrid');
@@ -800,22 +810,23 @@
         let currentFilter = 'all';
         let activeReel = null;
 
-        // Render 9:16 Vertical Reels Cards in a Horizontal Row
+        // Render 9:16 Vertical Reels Cards in a Horizontal Row with Google Drive Thumbnails
         function renderReels() {
             const filtered = currentFilter === 'all'
                 ? reelsData
                 : reelsData.filter(item => item.category === currentFilter);
 
-            reelsGrid.innerHTML = filtered.map(item => `
+            reelsGrid.innerHTML = filtered.map(item => {
+                const thumbUrl = getDriveThumbnailUrl(item.driveUrl);
+                return `
                 <article class="min-w-[235px] sm:min-w-[250px] lg:min-w-0 snap-start group rounded-3xl bg-white dark:bg-[#202226] border border-neutral-200 dark:border-neutral-800 hover:border-[#D71920] overflow-hidden shadow-md hover:shadow-2xl hover:shadow-[#D71920]/10 transition-all duration-300 flex flex-col justify-between">
                     <div>
                         <div onclick="openVideoModal(${item.id}, false)" class="relative aspect-[9/16] w-full bg-gradient-to-br ${item.accentGradient} overflow-hidden cursor-pointer">
-                            <video src="${item.src}" muted loop playsinline preload="metadata"
-                                onloadeddata="this.classList.remove('opacity-0')"
-                                onmouseenter="this.play().catch(()=>{})"
-                                onmouseleave="this.pause()"
-                                class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 z-10">
-                            </video>
+                            ${thumbUrl ? `
+                                <img src="${thumbUrl}" alt="${item.title}" loading="lazy"
+                                    onerror="this.style.display='none'"
+                                    class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 z-10">
+                            ` : ''}
 
                             <div class="absolute inset-0 p-3.5 flex flex-col justify-between z-20 bg-gradient-to-t from-black/85 via-black/20 to-black/45">
                                 <div class="flex items-center justify-between gap-1">
@@ -860,7 +871,7 @@
                         </button>
                     </div>
                 </article>
-            `).join('');
+            `}).join('');
 
             lucide.createIcons();
         }
@@ -870,18 +881,19 @@
             reelsGrid.scrollBy({ left: direction * 270, behavior: 'smooth' });
         };
 
-        // Render 16:9 Widescreen YouTube Cards
+        // Render 16:9 Widescreen YouTube Card with Google Drive Thumbnail
         function renderYoutubeVideos() {
-            youtubeGrid.innerHTML = youtubeData.map(item => `
+            youtubeGrid.innerHTML = youtubeData.map(item => {
+                const thumbUrl = getDriveThumbnailUrl(item.driveUrl);
+                return `
                 <article class="group rounded-3xl bg-neutral-50 dark:bg-[#202226] border border-neutral-200 dark:border-neutral-800 hover:border-[#D71920] overflow-hidden shadow-md hover:shadow-2xl hover:shadow-[#D71920]/10 transition-all duration-300 flex flex-col justify-between">
                     <div>
                         <div onclick="openVideoModal(${item.id}, true)" class="relative aspect-video w-full bg-gradient-to-br ${item.accentGradient} overflow-hidden cursor-pointer">
-                            <video src="${item.src}" muted loop playsinline preload="metadata"
-                                onloadeddata="this.classList.remove('opacity-0')"
-                                onmouseenter="this.play().catch(()=>{})"
-                                onmouseleave="this.pause()"
-                                class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 z-10">
-                            </video>
+                            ${thumbUrl ? `
+                                <img src="${thumbUrl}" alt="${item.title}" loading="lazy"
+                                    onerror="this.style.display='none'"
+                                    class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 z-10">
+                            ` : ''}
 
                             <div class="absolute inset-0 p-4 flex flex-col justify-between z-20 bg-gradient-to-t from-black/85 via-black/25 to-black/45">
                                 <div class="flex items-center justify-between">
@@ -894,8 +906,8 @@
                                 </div>
 
                                 <div class="my-auto mx-auto">
-                                    <div class="w-12 h-12 rounded-full bg-[#D71920] text-white flex items-center justify-center shadow-xl shadow-[#D71920]/40 group-hover:scale-110 transition-transform">
-                                        <i data-lucide="play" class="w-5 h-5 fill-current ml-0.5"></i>
+                                    <div class="w-14 h-14 rounded-full bg-[#D71920] text-white flex items-center justify-center shadow-xl shadow-[#D71920]/40 group-hover:scale-110 transition-transform">
+                                        <i data-lucide="play" class="w-6 h-6 fill-current ml-0.5"></i>
                                     </div>
                                 </div>
 
@@ -930,7 +942,7 @@
                         </button>
                     </div>
                 </article>
-            `).join('');
+            `}).join('');
 
             lucide.createIcons();
         }
@@ -974,32 +986,12 @@
             });
         };
 
-        // Local File Pickers for Instant Browser Preview
-        document.getElementById('localVideoLoader').addEventListener('change', (e) => {
-            const files = Array.from(e.target.files);
-            if (!files.length) return;
-            files.forEach((file, idx) => {
-                const matched = reelsData.find(r => r.fileName.toLowerCase() === file.name.toLowerCase()) || reelsData[idx];
-                if (matched) matched.src = URL.createObjectURL(file);
-            });
-            renderReels();
-        });
-
-        document.getElementById('localYoutubeLoader').addEventListener('change', (e) => {
-            const files = Array.from(e.target.files);
-            if (!files.length) return;
-            files.forEach((file, idx) => {
-                const matched = youtubeData.find(y => y.fileName.toLowerCase() === file.name.toLowerCase()) || youtubeData[idx];
-                if (matched) matched.src = URL.createObjectURL(file);
-            });
-            renderYoutubeVideos();
-        });
-
         // Video Lightbox Modal Logic
         const videoModal = document.getElementById('videoModal');
         const modalDialogBox = document.getElementById('modalDialogBox');
         const modalAspectContainer = document.getElementById('modalAspectContainer');
         const modalVideoPlayer = document.getElementById('modalVideoPlayer');
+        const modalDriveIframe = document.getElementById('modalDriveIframe');
         const modalFallbackMsg = document.getElementById('modalFallbackMsg');
 
         window.openVideoModal = function(id, isWide = false) {
@@ -1024,40 +1016,42 @@
             document.getElementById('modalVideoTitle').textContent = item.title;
             document.getElementById('modalVideoTags').textContent = item.highlights.join(' • ');
             document.getElementById('modalFallbackDesc').textContent =
-                `لتشغيل هذا الفيديو تلقائياً، ضع ملف (${item.fileName}) في نفس مجلد الموقع، أو اختره الآن للمعاينة الفورية.`;
+                `يمكنك مشاهدة جميع الفيديوهات مباشرة عبر مجلد Google Drive أو إرسال رابط كل فيديو لربطه بالمشغل هنا.`;
 
             modalFallbackMsg.classList.add('hidden');
-            modalVideoPlayer.src = item.src;
-            modalVideoPlayer.load();
+            const driveEmbed = getDriveEmbedUrl(item.driveUrl);
 
-            modalVideoPlayer.onerror = () => {
-                modalFallbackMsg.classList.remove('hidden');
-            };
+            if (driveEmbed) {
+                modalVideoPlayer.pause();
+                modalVideoPlayer.classList.add('hidden');
+                modalDriveIframe.src = driveEmbed;
+                modalDriveIframe.classList.remove('hidden');
+            } else {
+                modalDriveIframe.src = '';
+                modalDriveIframe.classList.add('hidden');
+                modalVideoPlayer.classList.remove('hidden');
+                modalVideoPlayer.src = item.src;
+                modalVideoPlayer.load();
 
-            modalVideoPlayer.onloadeddata = () => {
-                modalFallbackMsg.classList.add('hidden');
-                modalVideoPlayer.play().catch(() => {});
-            };
+                modalVideoPlayer.onerror = () => {
+                    modalFallbackMsg.classList.remove('hidden');
+                };
+
+                modalVideoPlayer.onloadeddata = () => {
+                    modalFallbackMsg.classList.add('hidden');
+                    modalVideoPlayer.play().catch(() => {});
+                };
+            }
 
             videoModal.classList.remove('hidden');
             videoModal.classList.add('flex');
         };
 
-        document.getElementById('singleVideoPicker').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file || !activeReel) return;
-            const blobUrl = URL.createObjectURL(file);
-            activeReel.src = blobUrl;
-            modalFallbackMsg.classList.add('hidden');
-            modalVideoPlayer.src = blobUrl;
-            modalVideoPlayer.play().catch(() => {});
-            if (activeReel.isWide) renderYoutubeVideos();
-            else renderReels();
-        });
-
         function closeModal() {
             modalVideoPlayer.pause();
             modalVideoPlayer.removeAttribute('src');
+            modalDriveIframe.src = '';
+            modalDriveIframe.classList.add('hidden');
             videoModal.classList.add('hidden');
             videoModal.classList.remove('flex');
         }
