@@ -615,7 +615,7 @@
 
                     <!-- Interactive Booking Form (7 Columns) -->
                     <div class="lg:col-span-7">
-                        <form id="bookingForm" action="https://formsubmit.co/contact.frameiq@gmail.com" method="POST" class="p-6 sm:p-8 rounded-3xl bg-neutral-50 dark:bg-[#202226] border border-neutral-200 dark:border-neutral-800 shadow-xl space-y-5">
+                        <form id="bookingForm" class="p-6 sm:p-8 rounded-3xl bg-neutral-50 dark:bg-[#202226] border border-neutral-200 dark:border-neutral-800 shadow-xl space-y-5">
                             <div class="grid sm:grid-cols-2 gap-5">
                                 <div>
                                     <label for="clientName" class="block text-xs font-extrabold text-neutral-600 dark:text-neutral-300 mb-2">الاسم أو اسم البراند *</label>
@@ -655,16 +655,21 @@
 
                             <button type="submit" id="submitBookingBtn" class="w-full py-4 px-6 rounded-2xl font-extrabold text-sm sm:text-base bg-[#D71920] hover:bg-[#B3141A] text-white shadow-lg shadow-[#D71920]/30 flex items-center justify-center gap-2 transition-all active:scale-[0.99]">
                                 <i data-lucide="send" class="w-4 h-4"></i>
-                                <span id="submitBtnText">إرسال الطلب</span>
+                                <span id="submitBtnText">إرسال الطلب عبر واتساب</span>
                             </button>
 
-                            <!-- Confirmation Banner -->
-                            <div id="formSuccessBanner" class="hidden p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-300 text-sm flex items-start gap-3 animate-fade-in">
-                                <i data-lucide="check-circle" class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5"></i>
-                                <div>
-                                    <p class="font-extrabold">تم إرسال طلبك بنجاح إلى فريق Frame iQ!</p>
-                                    <p id="formSuccessText" class="text-xs sm:text-sm mt-0.5 opacity-90"></p>
+                            <!-- Confirmation Banner with Direct WhatsApp Fallback Button -->
+                            <div id="formSuccessBanner" class="hidden p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-300 text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in">
+                                <div class="flex items-start gap-3">
+                                    <i data-lucide="check-circle" class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5"></i>
+                                    <div>
+                                        <p class="font-extrabold">تم تجهيز بيانات طلبك بنجاح!</p>
+                                        <p id="formSuccessText" class="text-xs sm:text-sm mt-0.5 opacity-90"></p>
+                                    </div>
                                 </div>
+                                <a id="whatsappRetryBtn" href="https://wa.me/201055981579" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shrink-0 text-center transition-colors">
+                                    فتح واتساب الآن
+                                </a>
                             </div>
                         </form>
                     </div>
@@ -1184,55 +1189,59 @@
             }, 2000);
         };
 
-        // Booking Form Submission -> Automatic Email Notification (contact.frameiq@gmail.com)
-        document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+        // Booking Form Submission -> Instant WhatsApp Redirect (01055981579) + Background Email Copy
+        document.getElementById('bookingForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            const submitBtn = document.getElementById('submitBookingBtn');
-            const submitBtnText = document.getElementById('submitBtnText');
             const name = document.getElementById('clientName').value.trim();
             const phone = document.getElementById('clientPhone').value.trim();
             const contentType = document.getElementById('contentType').value;
             const plan = document.getElementById('planSelect').value;
             const notes = document.getElementById('projectNotes').value.trim();
 
-            submitBtn.disabled = true;
-            submitBtnText.textContent = 'جاري إرسال طلبك...';
+            // 1. Format clean WhatsApp message with all client details
+            const waMessage = [
+                `مرحباً *Frame iQ* 🎬`,
+                `لدي طلب مونتاج جديد:`,
+                ``,
+                `👤 *الاسم / البراند:* ${name}`,
+                `📱 *رقم الواتساب:* ${phone}`,
+                `🎥 *نوع المحتوى:* ${contentType}`,
+                `📦 *الباقة المختارة:* ${plan}`,
+                `📝 *تفاصيل المشروع:* ${notes}`
+            ].join('\n');
 
-            try {
-                const response = await fetch('https://formsubmit.co/ajax/contact.frameiq@gmail.com', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        _subject: `طلب مونتاج جديد في Frame iQ - ${name} (${plan})`,
-                        _template: 'table',
-                        _captcha: 'false',
-                        'الاسم أو البراند': name,
-                        'رقم الواتساب للتواصل': phone,
-                        'نوع المحتوى': contentType,
-                        'الباقة المطلوبة': plan,
-                        'تفاصيل المشروع': notes
-                    })
-                });
+            const whatsappUrl = `https://wa.me/201055981579?text=${encodeURIComponent(waMessage)}`;
 
-                if (response.ok) {
-                    document.getElementById('formSuccessText').textContent =
-                        `شكراً لك يا ${name}! تم استلام بياناتك بنجاح وسيتواصل معك فريق Frame iQ في أقرب وقت.`;
-                    document.getElementById('formSuccessBanner').classList.remove('hidden');
-                    document.getElementById('bookingForm').reset();
-                } else {
-                    e.target.submit();
-                    return;
-                }
-            } catch (err) {
-                e.target.submit();
-                return;
-            }
+            // 2. Show instant confirmation banner & open WhatsApp immediately (zero delay)
+            document.getElementById('formSuccessText').textContent =
+                `شكراً لك يا ${name}! جاري تحويلك الآن إلى واتساب Frame iQ لإرسال تفاصيل طلبك مباشرة.`;
+            document.getElementById('whatsappRetryBtn').href = whatsappUrl;
+            document.getElementById('formSuccessBanner').classList.remove('hidden');
 
-            submitBtn.disabled = false;
-            submitBtnText.textContent = 'إرسال الطلب';
+            // Open WhatsApp right away
+            window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+
+            // 3. Fire-and-forget email backup in the background without blocking UI
+            fetch('https://formsubmit.co/ajax/contact.frameiq@gmail.com', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                keepalive: true,
+                body: JSON.stringify({
+                    _subject: `طلب مونتاج جديد في Frame iQ - ${name} (${plan})`,
+                    _template: 'table',
+                    _captcha: 'false',
+                    'الاسم أو البراند': name,
+                    'رقم الواتساب للتواصل': phone,
+                    'نوع المحتوى': contentType,
+                    'الباقة المطلوبة': plan,
+                    'تفاصيل المشروع': notes
+                })
+            }).catch(() => {});
+
+            document.getElementById('bookingForm').reset();
         });
 
         // Dark / Light Mode Toggle
